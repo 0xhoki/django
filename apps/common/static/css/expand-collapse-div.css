@@ -1,0 +1,10 @@
+.expand-header {
+    /* background-color:#d3d3d3; */
+    padding: 2px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.expand-content {
+    display: none;
+    padding : 5px;
+}

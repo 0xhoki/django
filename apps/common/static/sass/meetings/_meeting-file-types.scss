@@ -1,0 +1,82 @@
+.meeting-detail .file-ext-icon {
+  display: block;
+  width: 80px;
+  height: 80px;
+
+  border-radius: 6px;
+  border: 1px solid #e8e8e8;
+
+  background-repeat: no-repeat;
+  background-color: #f8f8f8;
+
+  &:hover {
+    background-color: #efefef;
+  }
+
+}
+.pdf, .docx, .xlsx, .pptx, .tiff, .png, .jpeg, .gif, .pptx {
+  background-repeat: no-repeat;
+}
+
+.meeting-detail .boardbook-icon {
+  background-image: url(../images/svg/boardbook.svg);
+  background-position: 12px 10px;
+  background-size: 50px;
+}
+
+.meeting-detail .pptx {
+  background-image: url(../images/ppt.png);
+  background-position: 8px 8px;
+}
+
+.meeting-detail .tiff {
+  background-image: url(../images/tiff.png);
+  background-position: 8px 8px;
+}
+
+.meeting-detail .png {
+  background-image: url(../images/png.png);
+  background-position: 8px 8px;
+}
+
+.meeting-detail .jpeg {
+  background-image: url(../images/jpeg.png);
+  background-position: 8px 8px;
+}
+
+.meeting-detail .gif {
+  background-image: url(../images/gif.png);
+  background-position: 8px 8px;
+}
+
+.meeting-detail .pdf {
+  background-image: url(../images/sprites.png);
+  background-position: 14px 10px;
+}
+
+.meeting-detail .xlsx {
+  background-image: url(../images/sprites.png);
+  background-position: 14px -98px;
+}
+
+.meeting-detail .docx {
+  background-image: url(../images/sprites.png);
+  background-position: 14px -210px;
+}
+
+.meeting-detail .viewer-link {
+  //float: left;
+  color: #008ac6;
+  font: 13px/32px arial, helvetica, sans-serif;
+  padding: 15px 0 30px 0;
+  margin: 0 10px 0 0;
+}
+
+.meeting-detail .viewer-link a {
+  text-decoration: underline;
+  color: #008ac6;
+}
+
+.meeting-detail .viewer-link a:hover {
+  text-decoration: none;
+}

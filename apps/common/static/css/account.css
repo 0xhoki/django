@@ -1,0 +1,13 @@
+.logo-preview {
+    float: left;
+}
+
+.logo-preview img {
+    max-height: 200px;
+    max-width: 200px;
+}
+
+.logo-preview + .edit-block {
+    padding-left: 10px;
+    margin-left: 10px;
+}

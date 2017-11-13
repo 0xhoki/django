@@ -1,0 +1,104 @@
+{% load i18n user_tags permissions_tags %}
+  <div class="bio-holder">
+    {% if membership_object %}
+      <h2>{{ membership_object.get_full_name }}</h2>
+      <h3><span>{{ membership_object.get_role_display }}</span></h3>
+      <div class="photo">
+        <img src="{{ membership_object|avatar:'360x270' }}" height="270" alt="image description">
+      </div>
+      <h4>{{ membership_object.intro }}</h4>
+      <div class="member-bio">{{ membership_object.bio|safe }}</div>
+      <dl>
+        <dt>
+          {% if membership_object.is_guest %}{% trans 'Guest since' %}{% else %}{% trans 'Joined Board' %}{% endif %}:
+        </dt>
+        <dd>{{ membership_object.date_joined_board|date:"N j, Y" }}</dd>
+        {% if not membership_object.is_guest %}
+        <dd class="divider">|</dd>
+        <dt>{% trans 'Term Expires' %}:</dt>
+        <dd>{{ membership_object.term_expires|date:"N j, Y"|default:'-' }}</dd>
+        {% endif %}
+      </dl>
+      {% if membership_object.role != request.user.ASSISTANT %}
+        <dl>
+          <dt>{% trans "Executive Assistant to" %}:</dt>
+          <dd>
+            {% for boss in membership_object.get_bosses %}
+              <a href="{{ boss.get_absolute_url }}">{{ boss }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </dd>
+        </dl>
+      {% else %}
+        <dl>
+          <dt>{% trans "Committes" %}:</dt>
+          <dd>
+            {% for commi in membership_object.committees.all %}
+              <a href="{{ commi.get_absolute_url }}">{{ commi.name }}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          </dd>
+        </dl>
+      {% endif %}
+      <dl>
+        <dt>{% trans 'Profile Last Changed on' %}:</dt>
+        <dd>{{ membership_object.last_modified|date:"N j, Y"|default:'-' }}</dd>
+      </dl>
+      {% if membership_object.position %}
+        <dl>
+          <dt>{% trans 'Profile Position' %}:</dt>
+          <dd>{{ membership_object.position }}</dd>
+        </dl>
+      {% endif %}
+      {% if membership_object.employer %}
+        <dl>
+          <dt>{% trans 'Employer' %}:</dt>
+          <dd>{{ membership_object.employer }}</dd>
+        </dl>
+      {% endif %}
+      {% if membership_object.job_title %}
+        <dl>
+          <dt>{% trans 'Job Title' %}:</dt>
+          <dd>{{ membership_object.job_title }}</dd>
+        </dl>
+      {% endif %}
+      {% if membership_object.get_affiliation %}
+        <dl>
+          <dt>{% trans 'Affiliation' %}:</dt>
+          <dd>{{ membership_object.get_affiliation }}</dd>
+        </dl>
+      {% endif %}
+      {% if membership_object.get_phone %}
+        <dl>
+          <dt>{% trans 'Phone Numbers' %}:</dt>
+          <dd>{{ membership_object.get_phone }}</dd>
+        </dl>
+      {% endif %}
+      {% if membership_object.assistant %}
+        <dl>
+          <dt>{% trans 'Assistant' %}:</dt>
+          <dd>
+            <a href="{% url 'profiles:assistant_detail' member_pk=membership_object.pk pk=membership_object.assistant.pk %}">
+              {{ membership_object.assistant.get_full_name }}
+            </a>
+          </dd>
+        </dl>
+      {% endif %}
+      <ul class="contacts">
+        {% if membership_object.account.view_email or current_membership|has_role_permission:'profiles.membership:add' %}
+          <li><a class="email" href="mailto:{{ membership_object.user.email }}">{{ membership_object.user.email }}</a></li>
+        {% endif %}
+        {% if membership_object.social_media_link %}
+          <li>
+            <a id="id_social_media_link" href="{{ membership_object.social_media_link }}" target="_blank"></a>
+          </li>
+        {% endif %}
+      </ul>
+    {% endif %}
+  </div>
+
+  <script id="delete-confirmation" type="text/x-kendo-template">
+    <p class="delete-message">{% trans 'Are you sure you want to deactivate this profile' %}?</p>
+    <div class="confirmation-buttons">
+      <button class="delete-confirm k-button">{% trans 'Yes' %}</button>
+      <button class="delete-cancel k-button">{% trans 'No' %}</button>
+    </div>
+  </script>

@@ -1,0 +1,107 @@
+{% extends "inner.html" %}
+{% load i18n static common_tags user_tags permissions_tags %}
+
+{% block extra_js %}
+  <script src="{% static 'js/kendo.web.min.js' %}"></script>
+  <script src="{% static 'js/object_delete.js' %}"></script>
+  <script src="{% static 'js/jquery-ui-1.11.4.custom.min.js' %}"></script>
+  <script src="{% static 'js/invite-user.js' %}"></script>
+  <script src="{% static 'js/member_detail.js' %}"></script>
+{% endblock extra_js %}
+
+
+{% block extra_css %}
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.3/themes/smoothness/jquery-ui.min.css">
+  <link rel="stylesheet" href="{% static 'css/popup.css' %}">
+  <link rel="stylesheet" href="{% static 'css.generated/members.css' %}">
+{% endblock extra_css %}
+
+
+{% block workspace %}
+  <header class="heading">
+    {% if membership_object %}
+      {# Edit #}
+      {% has_permission 'profiles.membership' 'edit' membership_object as permission_edit %}
+      {% if permission_edit %}
+        <a class="btn" id="member_edit_btn" href="{% url 'profiles:edit' pk=membership_object.pk %}">{% trans "Edit Profile" %}</a>
+      {% endif %}
+      {# Delete & Invite #}
+      {% if request.user != membership_object.user %}
+        {% has_permission 'profiles.membership' 'delete' membership_object as permission_delete %}
+        {% if permission_delete %}
+          {% if not membership_object.is_admin or current_membership.is_admin %}
+            <a class="btn delete" href="{% url 'profiles:delete' pk=membership_object.id %}">{% trans "Delete Member" %}</a>
+          {% endif %}
+        {% endif %}
+        {% if current_membership|has_role_permission:'profiles.membership:add' %}
+          <a class="btn" href="#" id="invite-popup-button">{% trans "Invite" %}</a>
+          <div class="invite-popup">
+            <div
+                id="invite-dialog"
+                title="{% trans "Send welcome email" %}"
+                data-send-button-text="{% trans "Send invite" %}"
+                data-cancel-button-text="{% trans "or CANCEL" %}"
+                data-url="{% url 'profiles:invite' user_pk=membership_object.user.pk %}"
+            >
+              <div class="subtitle">
+                {% trans "This will send an invitation email to your new user containg their username, password and the URL to login." %}
+              </div>
+              <div class="invite-form">
+                <form action="{% url 'profiles:invite' user_pk=membership_object.user.pk %}" id="invite-form">
+                  <input type="text" name="user" id="invite-user" value="{{ membership_object.get_full_name }}" readonly/>
+                  <textarea name="personal-message" id="invite-pm" cols="30" rows="10" placeholder="{% trans "Type personal message..." %}"></textarea>
+                  <label for="invite-pm" class="invite-pm">(optional)</label>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  </header>
+  <div class="bio">
+    {% if current_membership|has_role_permission:'profiles.membership:view' %}
+      <ul class="breadcrumbs">
+        <li><a href="{% acc_url 'board_members' %}">{% trans "Members" %}</a></li>
+        <li>{{ membership_object.get_full_name|capfirst }}</li>
+      </ul>
+    {% endif %}
+    {% include "profiles/includes/members_detail.html" %}
+
+    {% if request.user == membership_object.user %}
+      <div class="bio-holder social-accounts">
+        {% if backends.associated %}
+          <h3>{% trans 'Associated Social Profiles' %}</h3>
+          <ul class="social-accounts-list social-accounts-associated">
+            {% for backend in backends.associated %}
+              <li>
+                {% get_item social_mapping backend.provider as social %}
+                <i class="social-short-icon {{ social.icon }}"><span class="icon"></span></i>
+                <span class="social-accounts-uid">{{ backend.uid }}</span>
+                <form action="{% url 'social:disconnect' backend.provider %}?next={{ request.path | urlencode }}" method="post" class="inline-form">
+                  {% csrf_token %}
+                  <a href="javascript:void(0)" class="submit-form-on-click">{% trans 'Disconnect' %}</a>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        {% if backends.not_associated %}
+          <h3>{% trans 'Link Social Account' %}</h3>
+
+          <div class="social-accounts-list social-accounts-not-associated">
+            {% for backend in backends.not_associated %}
+              {% get_item social_mapping backend as social %}
+              <a href="{% url 'social:begin' backend %}?next={{ request.path | urlencode }}&login_back={{ request.path }}"
+                 class="social-short-icon {{ social.icon }}">
+                  <span class="icon"></span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+
+{% endblock workspace %}

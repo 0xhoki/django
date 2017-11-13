@@ -1,0 +1,57 @@
+{% extends "inner.html" %}
+{% load i18n common_tags permissions_tags %}
+{% load static from staticfiles %}
+
+{% block extra_css %}
+  {{ block.super }}
+  <link href="{% static 'css/kendo.common.min.css' %}" rel="stylesheet" />
+  <link href="{% static 'css/kendo.default.min.css' %}" rel="stylesheet" />
+{% endblock extra_css %}
+
+{% block extra_js %}
+  <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+  <script src="{% static 'js/kendo.web.min.js' %}"></script>
+  <script src="{% static 'js/jquery.imgareaselect.js' %}"></script>
+  <script src="{% static 'js/profile/edit-profile.js' %}"></script>
+  <script src="{% static 'js/field_array.js' %}"></script>
+  <script type="text/javascript">
+    var IS_GUEST = true;
+    var STAFF_ROLE_VALUE = {{ role_choice.staff }};
+  </script>
+{% endblock extra_js %}
+{% block workspace %}
+
+  <header class="heading">
+    <h1>{% trans "Add Guests" %}</h1>
+    <label>Add or edit staff, vendors, or consultant information. Both you and this guest can update this page.</label>
+  </header>
+  <form action="" method="POST" class="addmember-form" enctype="multipart/form-data">{% csrf_token %}
+    <div class="m1">
+      <div class="fields">
+        <div class="c1">
+          <ul class="fields-list">
+            {% include 'accounts/includes/add_guest_form.html' %}
+          </ul>
+          <div class="btns">
+            <div class="holder">
+              <button class="btn">{% trans "Save Guest" %}</button>
+            </div>
+            <div class="holder">
+              <button class="btn add-another">{% trans "Save and Add another" %}</button>
+            </div>
+            <input type="reset" class="reset" value="{% trans "Cancel" %}">
+          </div>
+        </div>
+      </div>
+      <div class="picture">
+        <div class="photo">
+          <img src="{{ default_avatar_url }}" width="130" height="86" alt="" id="avatar">
+        </div>
+        <div class="add-photo">
+          <a class="upload-link" href="">{% trans "Add Profile Picture" %}</a>
+          <input type="file" class="avatar-input" name="avatar" />
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "inner.html" %}
+{% load i18n compress user_tags common_tags permissions_tags static %}
+
+{% block extra_js %}
+  {{ block.super }}
+  {% compress js %}
+    <script src="{% static 'js/jquery.maskedinput.min.js' %}"></script>
+    <script src="{% static 'js/kendo.web.min.js' %}"></script>
+    <script src="{% static 'js/jquery.imgareaselect.js' %}"></script>
+    <script src="{% static 'js/field_array.js' %}"></script>
+
+    <script src="{% static 'js/libs/sweetalert2/sweetalert2.min.js' %}"></script>
+    <script src="{% static 'js/profile/edit-profile.js' %}"></script>
+  {% endcompress %}
+  <script type="text/javascript">
+    var IS_GUEST = {% if form.instance.is_guest %} true {% else %} false {% endif %};
+    var STAFF_ROLE_VALUE = {{ role_choice.staff }};
+  </script>
+{% endblock extra_js %}
+
+{% block extra_css %}
+  {% compress css %}
+    <link rel="stylesheet" href="{% static 'js/libs/sweetalert2/sweetalert2.min.css' %}">
+  {% endcompress %}
+{% endblock %}
+
+{% block workspace %}
+  <header class="heading">
+    {% if current_membership == form.instance %}
+      <h1 id="current_user_profile_header"
+          data-warning="{% trans "Are you sure you want to stop being the administrator of this account? You are about to change your permissions and won't be able to manage your portal." %}"
+          data-title="{% trans "Stop being the administrator?" %}"
+          data-confirm="{% trans 'Yes, change' %}"
+          data-cancel="{% trans 'No, revert' %}"
+      >{% trans "Edit Your Profile" %}</h1>
+    {% elif form.instance.is_guest %}
+      <h1>{% trans "Edit Guest Profile" %}</h1>
+    {% else %}
+      <h1>{% trans "Edit Member Profile" %}</h1>
+    {% endif %}
+  </header>
+  <form action="" method="POST" class="addmember-form" enctype="multipart/form-data">{% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    <div class="m1">
+      <dl class="settings">
+        {% if current_membership == form.instance %}
+          <dt>{% trans "My Profile" %}</dt>
+        {% elif form.instance.is_guest %}
+          <dt>{% trans "Guest Profile" %}</dt>
+        {% else %}
+          <dt>{% trans "Member Profile" %}</dt>
+        {% endif %}
+        <dd>
+          <ul>
+            {% if current_membership == form.instance %}
+              <li><a href="{% url 'accounts:boards' %}">{% trans "My Boards" %}</a></li>
+              <li><a href="{% url 'auth_password_change' %}"> {% trans "Change password" %}</a></li>
+              <li><a href="{% url 'change_email_index' %}">{% trans "Change email" %}</a></li>
+            {% elif current_membership|has_role_permission:'profiles.membership:edit' %}
+              <li><a href="{% url 'auth_members_password_change' pk=form.instance.pk %}"> {% trans "Change password" %}</a></li>
+            {% endif %}
+            {# Assistant link #}
+            {% if form.instance.can_have_assistant %}
+              {% if form.instance.assistant %}
+                <li><a href="{% url 'profiles:assistant_detail' member_pk=form.instance.pk pk=form.instance.assistant.pk %}">{% trans "Assistant" %}</a></li>
+              {% else %}
+                <li><a href="{% acc_url 'assistant_create' pk=form.instance.pk %}">{% trans "Create Assistant" %}</a></li>
+              {% endif %}
+            {% endif %}
+          </ul>
+        </dd>
+      </dl>
+      <div class="fields">
+        <div class="c1">
+          {% include 'profiles/includes/profiles_form.html' %}
+          <div class="btns">
+            <input type="submit" value="{% if form.instance.is_guest %}{% trans "Update Guest" %}{% else %}{% trans "Update Member" %}{% endif %}" class="btn"/>
+            <a class="reset" href="{{ request.path }}" style="margin-top: 13px;">{% trans "Cancel" %}</a>
+          </div>
+        </div>
+      </div>
+      <div class="picture">
+        <div class="photo">
+          <img src="{{ form.instance|avatar:'' }}" width="240" alt="{{ form.instance.get_full_name }}" id="avatar"
+              {% if form.instance.crops and form.instance.avatar %}data-crop-orig-w="{{ form.instance.avatar.width }}" data-crop-x="{{ form.instance.crops.data.rect.x }}" data-crop-y="{{ form.instance.crops.data.rect.y }}" data-crop-w="{{ form.instance.crops.data.rect.width }}" data-crop-h="{{ form.instance.crops.data.rect.height }}"{% endif %}>
+        </div>
+
+        <div class="add-photo">
+          <a class="upload-link" href="">{% if form.instance.avatar %}{% trans "Upload New Picture" %}{% else %}{% trans "Add Profile Picture" %}{% endif %}</a>
+          <input type="file" class="avatar-input" name="avatar" {% if form.instance.avatar %}data-img=true{% endif %}/>
+        </div>
+        {% if form.instance.avatar %}
+          <div class="add-photo add-thumb">
+            <a class="" href="#">{% trans "Save Thumbnail" %}</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+{% endblock %}

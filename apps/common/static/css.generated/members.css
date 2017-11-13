@@ -1,0 +1,57 @@
+.social-icon {
+  display: inline-block;
+  width: calc(50% - 36px);
+  margin: 5px;
+  padding: 13px;
+  font-size: 14px;
+  color: #fff;
+  text-decoration: none;
+  float: left;
+  cursor: pointer; }
+  .social-icon .icon:before {
+    font-family: FontAwesome;
+    float: left; }
+  .social-icon:hover {
+    text-decoration: none; }
+
+.social-short-icon {
+  display: inline-block;
+  width: 50px;
+  font-family: FontAwesome;
+  color: #fff !important;
+  text-align: center; }
+
+.social-facebook {
+  background: #3b5998; }
+  .social-facebook .icon:before {
+    content: "\f09a"; }
+  .social-facebook:hover {
+    background-color: #2d4373; }
+
+.social-linkedin {
+  background: #007bb6; }
+  .social-linkedin .icon:before {
+    content: "\f0e1"; }
+  .social-linkedin:hover {
+    background-color: #005983; }
+
+.social-google {
+  background: #d34836; }
+  .social-google .icon:before {
+    content: "\f0d5"; }
+  .social-google:hover {
+    background-color: #b03626; }
+
+.social-twitter {
+  background: #00c3f3; }
+  .social-twitter .icon:before {
+    content: '\f099'; }
+  .social-twitter:hover {
+    background-color: #009ac0; }
+
+.social-accounts h3 {
+  text-align: left;
+  margin-top: 30px;
+  margin-bottom: 5px; }
+
+/*# sourceMappingURL=maps/members.css.map */

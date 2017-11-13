@@ -1,0 +1,38 @@
+{% extends "inner.html" %}
+{% load i18n user_tags common_tags permissions_tags %}
+
+{% block extra_js %}
+  <script src="{{ STATIC_URL }}js/kendo.web.min.js"></script>
+  <script src="{{ STATIC_URL }}js/object_delete.js"></script>
+{% endblock extra_js %}
+
+{% block workspace %}
+  <ul class="breadcrumbs">
+    <li><a href="{% acc_url 'news:list' %}">{% trans 'News' %}</a></li>
+    <li>{{ news.title }}</li>
+  </ul>
+  <div class="content content-box">
+    <h2>{{ news.title }}</h2>
+    {% has_permission 'news.news' 'edit' news as permission_edit %}
+    {% if permission_edit %}
+      <a class="btn edit edit_committee" href="{% acc_url 'news:edit' pk=news.id %}">{% trans 'Edit News' %}</a>
+    {% endif %}
+    {% has_permission 'news.news' 'delete' news as permission_delete %}
+    {% if permission_delete %}
+      <a class="btn delete" href="{% acc_url 'news:delete' pk=news.id %}">{% trans 'Delete News' %}</a>
+    {% endif %}
+    {% if news.file %}
+      <div class="news-photo">
+        <img src="{{ news.list_photo_url }}">
+      </div>
+    {% endif %}
+    <p>{{ news.text|safe }}</p>
+  </div>
+  <script id="delete-confirmation" type="text/x-kendo-template">
+    <p class="delete-message">{% trans 'Are you sure you want to delete this news' %}?</p>
+    <div class="confirmation-buttons">
+      <button class="delete-confirm k-button">{% trans 'Yes' %}</button>
+      <button class="delete-cancel k-button">{% trans 'No' %}</button>
+    </div>
+  </script>
+{% endblock workspace %}

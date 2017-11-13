@@ -1,0 +1,42 @@
+{% extends "inner.html" %}
+{% load i18n common_tags %}
+
+{% block extra_js %}
+  <script src="{{ STATIC_URL }}js/kendo.web.min.js"></script>
+  <script src="{{ STATIC_URL }}js/jquery.imgareaselect.js"></script>
+  <script src="{{ STATIC_URL }}js/profile/edit-profile.js"></script>
+{% endblock extra_js %}
+
+{% block workspace %}
+  <header class="heading">
+    <h2>{% trans 'Update News' %}</h2>
+  </header>
+  <ul class="error">
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    {% for error in form.file.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+  <form method="post" enctype="multipart/form-data" class="createmeeting-form updatemeeting addmember-form">{% csrf_token %}
+     <div class="picture">
+      <div class="photo">
+        <img src="{{ form.instance.list_photo_url }}"  width="240">
+      </div>
+      <div class="add-photo">
+        <a class="upload-link" href="">{% if form.instance.photo %}{% trans "Upload New Picture" %}{% else %}{% trans "Add Article Picture" %}{% endif %}</a>
+        {{ form.file }}
+      </div>
+    </div>
+    <div class="fields">
+      <div class="c1">
+        <ul>
+          {% include 'committees/includes/edit_form.html' %}
+        </ul>
+        <input type="hidden" id="committee_id" value="{{ object.id }}">
+        <input type="submit" class="submit" value="{% trans 'Update News' %}">
+      </div>
+    </div>
+  </form>
+{% endblock workspace %}
